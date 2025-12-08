@@ -16,8 +16,8 @@ export default defineUserConfig({
   title: '微信文章集',
   description: '微信文章收藏与阅读',
   
-  // 设置基础路径
-  base: '/',
+  // 设置基础路径（GitHub Pages 部署到子路径）
+  base: '/articles/',
   
   // 使用 Vite 作为打包工具
   bundler: viteBundler(),

@@ -1,5 +1,5 @@
 import comp from "/Users/cody/CodeBuddy/20251209001439/docs/.vuepress/.temp/pages/articles/index.html.vue"
-const data = JSON.parse("{\"path\":\"/articles/\",\"title\":\"文章合集索引\",\"lang\":\"zh-CN\",\"frontmatter\":{},\"git\":{},\"filePathRelative\":\"articles/index.md\"}")
+const data = JSON.parse("{\"path\":\"/articles/\",\"title\":\"文章列表\",\"lang\":\"zh-CN\",\"frontmatter\":{},\"git\":{},\"filePathRelative\":\"articles/README.md\"}")
 export { comp, data }
 
 if (import.meta.webpackHot) {
@@ -13,4 +13,6 @@ if (import.meta.hot) {
   import.meta.hot.accept(({ data }) => {
     __VUE_HMR_RUNTIME__.updatePageData(data)
   })
+}
+})
 }

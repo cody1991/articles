@@ -6,11 +6,13 @@
   "scripts": {
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
-    "docs:clean-dev": "vuepress dev docs --clean-cache"
+    "docs:clean-dev": "vuepress dev docs --clean-cache",
+    "deploy": "npm run docs:build && gh-pages -d docs/.vuepress/dist"
   },
   "devDependencies": {
     "@vuepress/bundler-vite": "^2.0.0-rc.0",
     "@vuepress/theme-default": "^2.0.0-rc.0",
+    "gh-pages": "^6.3.0",
     "sass-embedded": "^1.93.3",
     "vuepress": "^2.0.0-rc.0"
   }

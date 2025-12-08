@@ -4,4 +4,6 @@ dist/
 *.log
 .vuepress/.cache
 .vuepress/dist
+# gh-pages
+.gh-pages
 
