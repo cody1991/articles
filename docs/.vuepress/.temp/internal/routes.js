@@ -334,20 +334,3 @@ export const routes = Object.fromEntries([
   ["/articles/%E6%8A%95%E8%B5%84%E4%B8%8E%E4%BA%BA%E7%94%9F%E5%BB%BA%E8%AE%AE%E6%80%BB%E7%BB%93.html", { loader: () => import(/* webpackChunkName: "articles_投资与人生建议总结.html" */"/Users/cody/CodeBuddy/20251209001439/docs/.vuepress/.temp/pages/articles/投资与人生建议总结.html.js"), meta: {"title":"投资建议与人生建议总结"} }],
   ["/404.html", { loader: () => import(/* webpackChunkName: "404.html" */"/Users/cody/CodeBuddy/20251209001439/docs/.vuepress/.temp/pages/404.html.js"), meta: {"title":""} }],
 ]);
-
-if (import.meta.webpackHot) {
-  import.meta.webpackHot.accept()
-  if (__VUE_HMR_RUNTIME__.updateRoutes) {
-    __VUE_HMR_RUNTIME__.updateRoutes(routes)
-  }
-  if (__VUE_HMR_RUNTIME__.updateRedirects) {
-    __VUE_HMR_RUNTIME__.updateRedirects(redirects)
-  }
-}
-
-if (import.meta.hot) {
-  import.meta.hot.accept(({ routes, redirects }) => {
-    __VUE_HMR_RUNTIME__.updateRoutes(routes)
-    __VUE_HMR_RUNTIME__.updateRedirects(redirects)
-  })
-}
