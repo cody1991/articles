@@ -78,6 +78,6 @@ export default defineUserConfig({
   port: 8080,
   
   // 构建配置
-  dest: 'dist',
+  dest: 'docs/.vuepress/dist',
 })
 
