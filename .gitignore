@@ -63,4 +63,5 @@ ENV/
 *.temp
 .cache/
 
+# Python
 __pycache__/
