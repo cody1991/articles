@@ -44,7 +44,7 @@ class WeChatAlbumDownloader:
         self.h2t.ignore_images = False
         self.h2t.body_width = 0  # 不换行
 
-    def get_album_articles(self, count=10, begin_msgid=None, begin_itemidx=None, reverse=True, retry=3):
+    def get_album_articles(self, count=10, begin_msgid=None, begin_itemidx=None, reverse=None, retry=3):
         """获取合集文章列表"""
         api_url = "https://mp.weixin.qq.com/mp/appmsgalbum"
         
@@ -56,7 +56,8 @@ class WeChatAlbumDownloader:
             'f': 'json',
         }
         
-        if reverse:
+        # reverse=True 时加 is_reverse=1，reverse=False 时不加
+        if reverse is True:
             params['is_reverse'] = 1
         
         if begin_msgid and begin_itemidx:
@@ -90,7 +91,7 @@ class WeChatAlbumDownloader:
         
         while True:
             print(f"  获取第 {page} 页...")
-            data = self.get_album_articles(count=20, begin_msgid=begin_msgid, begin_itemidx=begin_itemidx, reverse=reverse)
+            data = self.get_album_articles(count=20, begin_msgid=begin_msgid, begin_itemidx=begin_itemidx)
             
             if not data:
                 break
@@ -117,6 +118,11 @@ class WeChatAlbumDownloader:
             time.sleep(1)  # 避免请求过快
         
         print(f"\n共获取 {len(all_articles)} 篇文章")
+        
+        # 按时间排序
+        if reverse:
+            all_articles = sorted(all_articles, key=lambda x: self.parse_time(x.get('create_time', 0)), reverse=True)
+        
         return all_articles
 
     def download_article_content(self, url, retry=2):
@@ -192,34 +198,51 @@ class WeChatAlbumDownloader:
         return existing
     
     def get_latest_article(self):
-        """获取线上最新的一篇文章（使用倒序参数 is_reverse=1，直接获取最新的）"""
+        """获取线上最新的一篇文章，通过两次请求对比时间戳来判断真正最新的"""
         print("正在获取线上最新文章...")
-        data = self.get_album_articles(count=1, reverse=True)
         
-        if not data:
-            return None
+        # 第一次请求（不加 is_reverse）
+        data1 = self.get_album_articles(count=1, reverse=False)
+        article1 = None
         
-        article_list = data.get('getalbum_resp', {}).get('article_list', [])
+        if data1:
+            article_list = data1.get('getalbum_resp', {}).get('article_list', [])
+            if isinstance(article_list, dict):
+                article1 = article_list if article_list else None
+            elif isinstance(article_list, list):
+                article1 = article_list[0] if article_list else None
         
-        # 处理可能是字典或列表的情况
-        if isinstance(article_list, dict):
-            # 如果是字典，直接返回该文章
-            return article_list if article_list else None
-        elif isinstance(article_list, list):
-            # 如果是列表，返回第一个
-            return article_list[0] if article_list else None
+        # 第二次请求（加 is_reverse=1）
+        data2 = self.get_album_articles(count=1, reverse=True)
+        article2 = None
+        
+        if data2:
+            article_list = data2.get('getalbum_resp', {}).get('article_list', [])
+            if isinstance(article_list, dict):
+                article2 = article_list if article_list else None
+            elif isinstance(article_list, list):
+                article2 = article_list[0] if article_list else None
+        
+        # 对比时间戳，返回更新的那个
+        if article1 and article2:
+            time1 = self.parse_time(article1.get('create_time', 0))
+            time2 = self.parse_time(article2.get('create_time', 0))
+            return article1 if time1 >= time2 else article2
+        elif article1:
+            return article1
+        elif article2:
+            return article2
         
         return None
     
     def check_if_latest_exists(self):
         """检查本地是否已有最新文章，返回 (has_latest, latest_article, local_latest_date)"""
-        print("检查是否有新文章...")
-        
         latest_article = self.get_latest_article()
         if not latest_article:
-            print("  ✗ 无法获取线上文章")
+            print("  ✗ 无法获取线上最新文章")
             return False, None, None
         
+        # 用 API 返回的时间戳转换成日期
         create_time = self.parse_time(latest_article.get('create_time', 0))
         latest_date = datetime.fromtimestamp(create_time).strftime('%Y-%m-%d')
         latest_title = latest_article.get('title', '无标题')
@@ -232,15 +255,15 @@ class WeChatAlbumDownloader:
             print(f"  本地无文章，需要下载")
             return False, latest_article, None
         
-        # 获取本地最新日期
+        # 获取本地最新日期（从文件名中提取）
         local_dates = [info['date'] for info in existing_articles.values()]
         local_latest_date = max(local_dates) if local_dates else None
         
         print(f"  本地最新: {local_latest_date}")
         
-        # 对比
-        if latest_date == local_latest_date:
-            print(f"  ✓ 已有最新文章，无需下载")
+        # 对比日期，如果线上最新日期 > 本地最新日期，则需要下载
+        if local_latest_date and latest_date <= local_latest_date:
+            print(f"  ✓ 已有最新文章或更新的文章，无需下载")
             return True, latest_article, local_latest_date
         else:
             print(f"  ✗ 有新文章，需要下载")
