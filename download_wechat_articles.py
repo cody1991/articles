@@ -315,13 +315,13 @@ def download_all_accounts(skip_existing=False):
 def main():
     import sys
     
-    # 检查参数
-    skip_existing = False
+    # 处理参数 - 默认跳过已存在文件，可用 --force 强制重新下载
+    skip_existing = True
     account_name = None
     
     for arg in sys.argv[1:]:
-        if arg == '--skip-existing' or arg == '-s':
-            skip_existing = True
+        if arg == '--force' or arg == '-f':
+            skip_existing = False
         else:
             account_name = arg
     
@@ -332,16 +332,17 @@ def main():
             download_account(account_name, skip_existing=skip_existing)
     else:
         print("用法:")
-        print(f"  下载所有: python3 download_wechat_articles.py all")
-        print(f"  下载指定: python3 download_wechat_articles.py <公众号名>")
-        print(f"  只下载新: python3 download_wechat_articles.py <公众号名> --skip-existing")
-        print(f"  或简写:   python3 download_wechat_articles.py <公众号名> -s")
+        print(f"  下载所有:     python3 download_wechat_articles.py all")
+        print(f"  下载指定:     python3 download_wechat_articles.py <公众号名>")
+        print(f"  强制重新下载: python3 download_wechat_articles.py <公众号名> --force")
+        print(f"  或简写:       python3 download_wechat_articles.py <公众号名> -f")
+        print(f"\n说明: 默认只下载新文章（跳过已存在的），用 --force 覆盖已有文件")
         print(f"\n可用的公众号:")
         for name in WECHAT_ACCOUNTS.keys():
             print(f"  - {name}")
         print(f"\n示例:")
-        print(f"  python3 download_wechat_articles.py 金渐层 -s")
-        print(f"  python3 download_wechat_articles.py all -s")
+        print(f"  python3 download_wechat_articles.py 金渐层")
+        print(f"  python3 download_wechat_articles.py 只做主升不做调整 -f")
 
 
 if __name__ == "__main__":
