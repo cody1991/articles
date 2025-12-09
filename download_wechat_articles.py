@@ -237,7 +237,7 @@ class WeChatAlbumDownloader:
             
             # 检查是否已存在
             safe_title = self.sanitize_filename(title)
-            filename = f"{idx:03d}_{date_str}_{safe_title}.md"
+            filename = f"{date_str}_{safe_title}.md"
             
             if skip_existing and filename in existing_articles:
                 print(f"[{idx}/{len(articles)}] 跳过（已存在）: {title}")

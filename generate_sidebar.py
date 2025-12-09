@@ -32,12 +32,11 @@ def generate_sidebar_config():
         # 解析文件名获取信息
         for md_file in md_files:
             name = md_file.name
-            # 格式: 001_2025-12-08_我们不能再摔倒了~.md
-            match = re.match(r'(\d+)_(\d{4}-\d{2}-\d{2})_(.+)\.md', name)
+            # 格式: 2025-12-08_我们不能再摔倒了~.md
+            match = re.match(r'(\d{4}-\d{2}-\d{2})_(.+)\.md', name)
             if match:
-                num, date, title = match.groups()
+                date, title = match.groups()
                 article_info = {
-                    'num': int(num),
                     'date': date,
                     'title': title,
                     'path': f'/{author_name}/{name}',
@@ -53,7 +52,7 @@ def generate_sidebar_config():
             continue
         
         # 按日期倒序排列（最新的在前）
-        articles.sort(key=lambda x: (x['date'], x['num']), reverse=True)
+        articles.sort(key=lambda x: x['date'], reverse=True)
         
         # 生成侧边栏配置
         sidebar = [

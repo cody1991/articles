@@ -42,6 +42,10 @@ WECHAT_ACCOUNTS = {
 python3 download_wechat_articles.py 公众号名字
 ```
 
+**文件命名格式**：`YYYY-MM-DD_标题.md`
+- 日期作为主键，新增文章自动按日期排序
+- 新文章会自动插入到正确的位置，无需编号
+
 ### 4. 生成侧边栏配置
 下载完成后，运行生成脚本来更新网站侧边栏：
 ```bash
