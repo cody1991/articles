@@ -32,14 +32,16 @@ npm run docs:build
 
 ```
 .
-├── docs/                  # VuePress 文档目录
-│   ├── .vuepress/        # VuePress 配置
-│   │   └── config.js     # 配置文件
-│   ├── articles/         # 文章目录（软链接到 wechat_articles）
-│   └── README.md         # 首页
-├── wechat_articles/       # 原始文章目录
-├── sidebar_config.json   # 侧边栏配置（自动生成）
-└── package.json          # 项目配置
+├── docs/                           # VuePress 文档目录（数据源）
+│   ├── .vuepress/                 # VuePress 配置
+│   │   └── config.js              # 配置文件
+│   ├── 金渐层/                     # 公众号文章目录 1
+│   ├── 只做主升不做调整/           # 公众号文章目录 2
+│   └── README.md                   # 首页
+├── download_wechat_articles.py     # 文章下载脚本
+├── generate_sidebar.py             # 侧边栏生成脚本
+├── sidebar_config.json             # 侧边栏配置（自动生成）
+└── package.json                    # 项目配置
 ```
 
 ## 更新文章列表

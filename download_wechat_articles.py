@@ -286,11 +286,11 @@ class WeChatAlbumDownloader:
 WECHAT_ACCOUNTS = {
     '金渐层': {
         'url': 'https://mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzg2NTkwNTM4MA==&action=getalbum&album_id=3896715541905326087',
-        'output_dir': 'wechat_articles/金渐层'
+        'output_dir': 'docs/金渐层'
     },
     '只做主升不做调整': {
         'url': 'https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI2NzA2Mzg3MQ==&action=getalbum&album_id=3822716899375087617',
-        'output_dir': 'wechat_articles/只做主升不做调整'
+        'output_dir': 'docs/只做主升不做调整'
     }
 }
 

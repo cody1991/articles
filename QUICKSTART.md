@@ -38,11 +38,12 @@ python3 generate_sidebar.py
 
 ## 项目结构说明
 
-- `docs/` - VuePress 文档目录
+- `docs/` - VuePress 文档目录（唯一数据源）
   - `docs/.vuepress/config.js` - VuePress 配置文件
-  - `docs/articles/` - 文章目录（软链接到 `wechat_articles`）
+  - `docs/金渐层/` - 公众号文章目录 1
+  - `docs/只做主升不做调整/` - 公众号文章目录 2
   - `docs/README.md` - 首页
-- `wechat_articles/` - 原始文章目录
+- `download_wechat_articles.py` - 从微信下载文章到 `docs/` 目录
 - `sidebar_config.json` - 侧边栏配置（自动生成）
 - `generate_sidebar.py` - 侧边栏生成脚本
 
