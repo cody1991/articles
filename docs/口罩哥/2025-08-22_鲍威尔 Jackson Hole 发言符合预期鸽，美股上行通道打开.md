@@ -6,7 +6,7 @@
 
 ---
 
-![](https://mmbiz.qpic.cn/mmbiz_png/0CMJrDscLaibdCicJ3SHww9zNaiaQLSopI5ibKm0kYQ6wQpofADzGZhyOYCGlHopCoVF3EmDSDanicXaYjYUdiclNbyg/640?wx_fmt=png&amp;from=appmsg)总结一下 Powell 在 Jackson Hole 的 Bullet Point:
+![](images/2025-08-22_img0.png)总结一下 Powell 在 Jackson Hole 的 Bullet Point:
 
 政策立场调整
 
@@ -36,21 +36,21 @@
 
 简单来说：鸽派，可以降息。
 
-![](https://mmbiz.qpic.cn/mmbiz_jpg/0CMJrDscLaibdCicJ3SHww9zNaiaQLSopI5F5Gu8PkF40lAd2z6DcZ7NntD54g6hicTUIuEicLZ0zax1BT9gibQahboA/640?wx_fmt=jpeg&amp;from=appmsg)
+![](images/2025-08-22_img1.jpg)
 
 标普、纳斯达克、道琼斯、罗素四大指数在鲍威尔发言期间直接上攻。
 
-![](https://mmbiz.qpic.cn/mmbiz_png/0CMJrDscLaibdCicJ3SHww9zNaiaQLSopI5uDQibXPzGPlKYdgRibDavsheFfEXsgJdEU4OUBzubGOcUzIKYQcoT7aw/640?wx_fmt=png&amp;from=appmsg)
+![](images/2025-08-22_img2.png)
 
 美股重回上涨轨道。
 
 我们看看 CME Group 的预测，在鲍威尔发言后马上提高了降息预期，从昨天 75% 飙升到 89.4%，年内可能两次降息，9 月大概率就是第一次：
 
-![](https://mmbiz.qpic.cn/mmbiz_jpg/0CMJrDscLaibdCicJ3SHww9zNaiaQLSopI5qEdm5oGXu87UwMWzfSUKRKice3OlhGs7NKACtNu1MiaeSGdxKETSnCOw/640?wx_fmt=jpeg&amp;from=appmsg)
+![](images/2025-08-22_img3.jpg)
 
  在看看用真金实银投票的 PolyMarket：
 
-![](https://mmbiz.qpic.cn/mmbiz_jpg/0CMJrDscLaibdCicJ3SHww9zNaiaQLSopI5MHL4E1UeJ3uSwzzXViaBCUBo6bKA1L7atxdyu65DDcZCfdI4CHrkCIw/640?wx_fmt=jpeg&amp;from=appmsg)
+![](images/2025-08-22_img4.jpg)
 
 符合之前文章的判断，美股垃圾时间结束，上行空间重新被打开。
 
@@ -60,7 +60,7 @@
 
 最后我们来看看板块热力图，万物补涨：
 
-![](https://mmbiz.qpic.cn/mmbiz_jpg/0CMJrDscLaibdCicJ3SHww9zNaiaQLSopI5yIgJoibGibGJSEF0at8x2qD4KvRnEetMv118AzMzeLaCGIBQyZt1Z2Jw/640?wx_fmt=jpeg&amp;from=appmsg)
+![](images/2025-08-22_img5.jpg)
 
 昨天冒着不能再写公众号的声誉发表了这篇文章，希望能安慰到最近恐慌的各位：
 
@@ -68,7 +68,7 @@
 > 
 > 公众号：社会观察从业者[曙光将至，新高会来](https://mp.weixin.qq.com/s/8wtNJgZnTyp2OfaJWTYfwA)
 
-![](https://mmbiz.qpic.cn/mmbiz_png/0CMJrDscLaibdCicJ3SHww9zNaiaQLSopI5iaOdKeibCiaVxKyGiaIZEia8QMEmKdMTHH8mgbI4BfAp4QGftZA0DOfykFg/640?wx_fmt=png&amp;from=appmsg)
+![](images/2025-08-22_img6.png)
 
   
 
