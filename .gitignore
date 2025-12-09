@@ -63,3 +63,4 @@ ENV/
 *.temp
 .cache/
 
+__pycache__/
