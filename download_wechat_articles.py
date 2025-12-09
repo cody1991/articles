@@ -44,7 +44,7 @@ class WeChatAlbumDownloader:
         self.h2t.ignore_images = False
         self.h2t.body_width = 0  # 不换行
 
-    def get_album_articles(self, count=10, begin_msgid=None, begin_itemidx=None):
+    def get_album_articles(self, count=10, begin_msgid=None, begin_itemidx=None, retry=3):
         """获取合集文章列表"""
         api_url = "https://mp.weixin.qq.com/mp/appmsgalbum"
         
@@ -60,14 +60,21 @@ class WeChatAlbumDownloader:
             params['begin_msgid'] = begin_msgid
             params['begin_itemidx'] = begin_itemidx
         
-        try:
-            response = self.session.get(api_url, params=params, headers=self.headers, timeout=30)
-            response.raise_for_status()
-            data = response.json()
-            return data
-        except Exception as e:
-            print(f"获取文章列表失败: {e}")
-            return None
+        for attempt in range(retry):
+            try:
+                response = self.session.get(api_url, params=params, headers=self.headers, timeout=60)
+                response.raise_for_status()
+                data = response.json()
+                return data
+            except Exception as e:
+                if attempt < retry - 1:
+                    wait_time = 2 ** attempt  # 指数退避
+                    print(f"    获取失败 ({attempt+1}/{retry}): {e}，{wait_time}秒后重试...")
+                    time.sleep(wait_time)
+                else:
+                    print(f"获取文章列表失败（已重试{retry}次）: {e}")
+                    return None
+        return None
 
     def get_all_articles(self):
         """获取所有文章列表"""
@@ -109,37 +116,42 @@ class WeChatAlbumDownloader:
         print(f"\n共获取 {len(all_articles)} 篇文章")
         return all_articles
 
-    def download_article_content(self, url):
+    def download_article_content(self, url, retry=2):
         """下载单篇文章内容"""
-        try:
-            response = self.session.get(url, headers=self.headers, timeout=30)
-            response.raise_for_status()
-            html_content = response.text
-            
-            # 提取文章正文
-            # 尝试提取 js_content 区域
-            content_match = re.search(r'<div[^>]*id="js_content"[^>]*>(.*?)</div>\s*<script', html_content, re.DOTALL)
-            if content_match:
-                content_html = content_match.group(1)
-            else:
-                # 备选：提取整个 rich_media_content
-                content_match = re.search(r'<div[^>]*class="rich_media_content[^"]*"[^>]*>(.*?)</div>\s*(?:<div|<script)', html_content, re.DOTALL)
+        for attempt in range(retry):
+            try:
+                response = self.session.get(url, headers=self.headers, timeout=60)
+                response.raise_for_status()
+                html_content = response.text
+                
+                # 提取文章正文
+                # 尝试提取 js_content 区域
+                content_match = re.search(r'<div[^>]*id="js_content"[^>]*>(.*?)</div>\s*<script', html_content, re.DOTALL)
                 if content_match:
                     content_html = content_match.group(1)
                 else:
-                    content_html = ""
-            
-            # 转换为Markdown
-            if content_html:
-                markdown_content = self.h2t.handle(content_html)
-                # 清理多余空行
-                markdown_content = re.sub(r'\n{3,}', '\n\n', markdown_content)
-                return markdown_content.strip()
-            
-            return ""
-        except Exception as e:
-            print(f"    下载文章内容失败: {e}")
-            return ""
+                    # 备选：提取整个 rich_media_content
+                    content_match = re.search(r'<div[^>]*class="rich_media_content[^"]*"[^>]*>(.*?)</div>\s*(?:<div|<script)', html_content, re.DOTALL)
+                    if content_match:
+                        content_html = content_match.group(1)
+                    else:
+                        content_html = ""
+                
+                # 转换为Markdown
+                if content_html:
+                    markdown_content = self.h2t.handle(content_html)
+                    # 清理多余空行
+                    markdown_content = re.sub(r'\n{3,}', '\n\n', markdown_content)
+                    return markdown_content.strip()
+                
+                return ""
+            except Exception as e:
+                if attempt < retry - 1:
+                    print(f"    下载失败 ({attempt+1}/{retry})，2秒后重试...")
+                    time.sleep(2)
+                else:
+                    print(f"    下载文章内容失败: {e}")
+        return ""
 
     def sanitize_filename(self, filename):
         """清理文件名，移除非法字符"""
