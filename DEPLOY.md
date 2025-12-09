@@ -35,7 +35,10 @@ npm run deploy
 1. **base 路径**：当前配置的 base 路径是 `/articles/`，与仓库名匹配
    - 如果仓库名改变，需要同步修改 `docs/.vuepress/config.js` 中的 `base` 配置
 
-2. **软链接问题**：GitHub Actions 会自动将 `wechat_articles` 复制到 `docs/articles`，避免软链接问题
+2. **部署流程**：GitHub Actions 会：
+   - 运行 `generate_sidebar.py` 生成侧边栏配置
+   - 构建 VuePress 站点
+   - 部署到 GitHub Pages
 
 3. **Jekyll 禁用**：项目包含 `.nojekyll` 文件，确保 GitHub Pages 不使用 Jekyll 处理
 

@@ -7,40 +7,54 @@ import re
 from pathlib import Path
 
 def generate_sidebar_config():
-    # 公众号映射
+    # 公众号映射 - 支持两个源目录
     authors = {
-        '金渐层': 'docs/金渐层'
+        '金渐层': ['docs/金渐层', 'wechat_articles']  # 优先使用 docs/金渐层，备用 wechat_articles
     }
     
     all_configs = {}
     
     # 处理每个公众号
-    for author_name, author_dir in authors.items():
-        articles_dir = Path(author_dir)
-        if not articles_dir.exists():
-            print(f'⚠️ 目录不存在: {author_dir}')
-            continue
-            
-        md_files = sorted([
-            f for f in articles_dir.glob('*.md') 
-            if f.name not in ['index.md', '投资与人生建议总结.md', 'README.md']
-        ])
-        
-        # 解析文件名获取信息
+    for author_name, source_dirs in authors.items():
         articles = []
-        for md_file in md_files:
-            name = md_file.name
-            # 格式: 001_2025-12-08_我们不能再摔倒了~.md
-            match = re.match(r'(\d+)_(\d{4}-\d{2}-\d{2})_(.+)\.md', name)
-            if match:
-                num, date, title = match.groups()
-                articles.append({
-                    'num': int(num),
-                    'date': date,
-                    'title': title,
-                    'path': f'/{author_name}/{name}',
-                    'filename': name
-                })
+        
+        # 尝试从配置的目录中读取文章
+        for source_dir in source_dirs:
+            articles_dir = Path(source_dir)
+            if not articles_dir.exists():
+                continue
+                
+            md_files = sorted([
+                f for f in articles_dir.glob('*.md') 
+                if f.name not in ['index.md', 'README.md', '投资与人生建议总结.md']
+            ])
+            
+            # 解析文件名获取信息
+            for md_file in md_files:
+                name = md_file.name
+                # 格式: 001_2025-12-08_我们不能再摔倒了~.md
+                match = re.match(r'(\d+)_(\d{4}-\d{2}-\d{2})_(.+)\.md', name)
+                if match:
+                    num, date, title = match.groups()
+                    article_info = {
+                        'num': int(num),
+                        'date': date,
+                        'title': title,
+                        'path': f'/{author_name}/{name}',
+                        'filename': name
+                    }
+                    
+                    # 避免重复
+                    if article_info not in articles:
+                        articles.append(article_info)
+            
+            # 如果在这个目录找到了文章，就不再尝试后续目录
+            if articles:
+                break
+        
+        if not articles:
+            print(f'⚠️ 目录不存在或为空: {source_dirs}')
+            continue
         
         # 按日期倒序排列（最新的在前）
         articles.sort(key=lambda x: (x['date'], x['num']), reverse=True)
