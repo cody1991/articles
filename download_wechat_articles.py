@@ -125,7 +125,7 @@ class WeChatAlbumDownloader:
         
         return all_articles
 
-    def download_image(self, img_url, article_date, img_counter, retry=2):
+    def download_image(self, img_url, article_date, article_title, img_counter, retry=2):
         """下载单张图片"""
         for attempt in range(retry):
             try:
@@ -152,8 +152,9 @@ class WeChatAlbumDownloader:
                     url_path = img_url.split('?')[0]
                     ext = os.path.splitext(url_path)[1] or '.jpg'
                 
-                # 保存图片
-                filename = f"{article_date}_img{img_counter}{ext}"
+                # 保存图片，包含日期+标题+计数器以避免冲突
+                safe_title = self.sanitize_filename(article_title)[:30]  # 限制长度
+                filename = f"{article_date}_{safe_title}_img{img_counter}{ext}"
                 filepath = os.path.join(img_dir, filename)
                 
                 with open(filepath, 'wb') as f:
@@ -168,7 +169,7 @@ class WeChatAlbumDownloader:
                     print(f"      下载图片失败 ({img_url}): {e}")
         return None
 
-    def download_article_content(self, url, article_date, retry=2):
+    def download_article_content(self, url, article_date, article_title, retry=2):
         """下载单篇文章内容，下载图片到本地"""
         for attempt in range(retry):
             try:
@@ -202,7 +203,7 @@ class WeChatAlbumDownloader:
                         placeholder = f"__IMAGE_PLACEHOLDER_{img_counter}__"
                         
                         # 下载图片
-                        local_path = self.download_image(img_url, article_date, img_counter)
+                        local_path = self.download_image(img_url, article_date, article_title, img_counter)
                         if local_path:
                             img_replacements[placeholder] = local_path
                         else:
@@ -405,7 +406,7 @@ class WeChatAlbumDownloader:
                 continue
             
             # 下载内容
-            content = self.download_article_content(url, date_str)
+            content = self.download_article_content(url, date_str, safe_title)
             
             # 保存文件
             filepath = os.path.join(self.output_dir, filename)
