@@ -44,7 +44,7 @@ class WeChatAlbumDownloader:
         self.h2t.ignore_images = False
         self.h2t.body_width = 0  # 不换行
 
-    def get_album_articles(self, count=10, begin_msgid=None, begin_itemidx=None, retry=3):
+    def get_album_articles(self, count=10, begin_msgid=None, begin_itemidx=None, reverse=True, retry=3):
         """获取合集文章列表"""
         api_url = "https://mp.weixin.qq.com/mp/appmsgalbum"
         
@@ -55,6 +55,9 @@ class WeChatAlbumDownloader:
             'count': count,
             'f': 'json',
         }
+        
+        if reverse:
+            params['is_reverse'] = 1
         
         if begin_msgid and begin_itemidx:
             params['begin_msgid'] = begin_msgid
@@ -76,7 +79,7 @@ class WeChatAlbumDownloader:
                     return None
         return None
 
-    def get_all_articles(self):
+    def get_all_articles(self, reverse=True):
         """获取所有文章列表"""
         all_articles = []
         begin_msgid = None
@@ -87,7 +90,7 @@ class WeChatAlbumDownloader:
         
         while True:
             print(f"  获取第 {page} 页...")
-            data = self.get_album_articles(count=20, begin_msgid=begin_msgid, begin_itemidx=begin_itemidx)
+            data = self.get_album_articles(count=20, begin_msgid=begin_msgid, begin_itemidx=begin_itemidx, reverse=reverse)
             
             if not data:
                 break
@@ -178,16 +181,70 @@ class WeChatAlbumDownloader:
         
         for filename in os.listdir(self.output_dir):
             if filename.endswith('.md') and filename != 'index.md' and filename != 'README.md':
-                # 格式: 001_2025-12-09_标题.md
-                match = re.match(r'(\d+)_(\d{4}-\d{2}-\d{2})_(.+)\.md', filename)
+                # 格式: YYYY-MM-DD_标题.md
+                match = re.match(r'(\d{4}-\d{2}-\d{2})_(.+)\.md', filename)
                 if match:
-                    num, date, title = match.groups()
+                    date, title = match.groups()
                     existing[filename] = {
-                        'num': int(num),
                         'date': date,
                         'title': title
                     }
         return existing
+    
+    def get_latest_article(self):
+        """获取线上最新的一篇文章（使用倒序参数 is_reverse=1，直接获取最新的）"""
+        print("正在获取线上最新文章...")
+        data = self.get_album_articles(count=1, reverse=True)
+        
+        if not data:
+            return None
+        
+        article_list = data.get('getalbum_resp', {}).get('article_list', [])
+        
+        # 处理可能是字典或列表的情况
+        if isinstance(article_list, dict):
+            # 如果是字典，直接返回该文章
+            return article_list if article_list else None
+        elif isinstance(article_list, list):
+            # 如果是列表，返回第一个
+            return article_list[0] if article_list else None
+        
+        return None
+    
+    def check_if_latest_exists(self):
+        """检查本地是否已有最新文章，返回 (has_latest, latest_article, local_latest_date)"""
+        print("检查是否有新文章...")
+        
+        latest_article = self.get_latest_article()
+        if not latest_article:
+            print("  ✗ 无法获取线上文章")
+            return False, None, None
+        
+        create_time = self.parse_time(latest_article.get('create_time', 0))
+        latest_date = datetime.fromtimestamp(create_time).strftime('%Y-%m-%d')
+        latest_title = latest_article.get('title', '无标题')
+        
+        print(f"  线上最新: {latest_date} - {latest_title}")
+        
+        # 获取本地已有的文章
+        existing_articles = self.get_existing_articles()
+        if not existing_articles:
+            print(f"  本地无文章，需要下载")
+            return False, latest_article, None
+        
+        # 获取本地最新日期
+        local_dates = [info['date'] for info in existing_articles.values()]
+        local_latest_date = max(local_dates) if local_dates else None
+        
+        print(f"  本地最新: {local_latest_date}")
+        
+        # 对比
+        if latest_date == local_latest_date:
+            print(f"  ✓ 已有最新文章，无需下载")
+            return True, latest_article, local_latest_date
+        else:
+            print(f"  ✗ 有新文章，需要下载")
+            return False, latest_article, local_latest_date
 
     def download_all(self, reverse=True, download_content=True, skip_existing=False):
         """
@@ -198,7 +255,7 @@ class WeChatAlbumDownloader:
             download_content: 是否下载文章内容
             skip_existing: 是否跳过已下载的文章
         """
-        articles = self.get_all_articles()
+        articles = self.get_all_articles(reverse=reverse)
         
         if not articles:
             print("没有获取到文章")
@@ -287,7 +344,7 @@ WECHAT_ACCOUNTS = {
 }
 
 
-def download_account(account_name, skip_existing=False):
+def download_account(account_name, skip_existing=False, check_only=False):
     """下载指定公众号的文章"""
     if account_name not in WECHAT_ACCOUNTS:
         print(f"未知公众号: {account_name}")
@@ -296,51 +353,69 @@ def download_account(account_name, skip_existing=False):
     
     config = WECHAT_ACCOUNTS[account_name]
     print(f"\n{'='*50}")
-    print(f"开始下载: {account_name}")
-    if skip_existing:
-        print("模式: 只下载新文章（跳过已存在的）")
+    print(f"处理: {account_name}")
     print(f"{'='*50}\n")
     
     downloader = WeChatAlbumDownloader(config['url'], output_dir=config['output_dir'])
+    
+    # 检查是否已有最新文章
+    if check_only or skip_existing:
+        has_latest, latest_article, local_latest = downloader.check_if_latest_exists()
+        if has_latest and check_only:
+            print()
+            return
+    
+    if skip_existing:
+        print("模式: 只下载新文章（跳过已存在的）")
+    
+    print()
     downloader.download_all(reverse=True, download_content=True, skip_existing=skip_existing)
 
 
-def download_all_accounts(skip_existing=False):
+def download_all_accounts(skip_existing=False, check_only=False):
     """下载所有公众号的文章"""
     for account_name in WECHAT_ACCOUNTS.keys():
-        download_account(account_name, skip_existing=skip_existing)
+        download_account(account_name, skip_existing=skip_existing, check_only=check_only)
         print("\n" + "="*50 + "\n")
 
 
 def main():
     import sys
     
-    # 处理参数 - 默认跳过已存在文件，可用 --force 强制重新下载
+    # 处理参数
     skip_existing = True
     account_name = None
+    check_only = False
     
     for arg in sys.argv[1:]:
         if arg == '--force' or arg == '-f':
             skip_existing = False
+        elif arg == '--check' or arg == '-c':
+            check_only = True
         else:
             account_name = arg
     
     if account_name:
         if account_name == 'all':
-            download_all_accounts(skip_existing=skip_existing)
+            download_all_accounts(skip_existing=skip_existing, check_only=check_only)
         else:
-            download_account(account_name, skip_existing=skip_existing)
+            download_account(account_name, skip_existing=skip_existing, check_only=check_only)
     else:
         print("用法:")
+        print(f"  检查所有:     python3 download_wechat_articles.py all --check")
+        print(f"  检查指定:     python3 download_wechat_articles.py <公众号名> --check")
         print(f"  下载所有:     python3 download_wechat_articles.py all")
         print(f"  下载指定:     python3 download_wechat_articles.py <公众号名>")
         print(f"  强制重新下载: python3 download_wechat_articles.py <公众号名> --force")
-        print(f"  或简写:       python3 download_wechat_articles.py <公众号名> -f")
-        print(f"\n说明: 默认只下载新文章（跳过已存在的），用 --force 覆盖已有文件")
+        print(f"\n参数说明:")
+        print(f"  --check, -c: 只检查是否有新文章，不下载")
+        print(f"  --force, -f: 强制重新下载，覆盖已有文件")
+        print(f"\n默认行为: 检查线上最新文章，若本地已有则跳过，否则下载")
         print(f"\n可用的公众号:")
         for name in WECHAT_ACCOUNTS.keys():
             print(f"  - {name}")
         print(f"\n示例:")
+        print(f"  python3 download_wechat_articles.py all --check")
         print(f"  python3 download_wechat_articles.py 金渐层")
         print(f"  python3 download_wechat_articles.py 只做主升不做调整 -f")
 
