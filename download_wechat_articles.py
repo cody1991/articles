@@ -217,27 +217,7 @@ class WeChatAlbumDownloader:
             articles = sorted(articles, key=lambda x: self.parse_time(x.get('create_time', 0)))
             print("\n按正序（从旧到新）下载文章...")
         
-        # 保存文章列表
-        list_file = os.path.join(self.output_dir, "article_list.json")
-        with open(list_file, 'w', encoding='utf-8') as f:
-            json.dump(articles, f, ensure_ascii=False, indent=2)
-        print(f"文章列表已保存到: {list_file}")
-        
-        # 创建索引文件
-        index_file = os.path.join(self.output_dir, "index.md")
-        with open(index_file, 'w', encoding='utf-8') as f:
-            f.write("# 文章合集索引\n\n")
-            f.write(f"共 {len(articles)} 篇文章\n\n")
-            f.write("| 序号 | 标题 | 发布时间 |\n")
-            f.write("|------|------|----------|\n")
-            
-            for idx, article in enumerate(articles, 1):
-                title = article.get('title', '无标题')
-                create_time = self.parse_time(article.get('create_time', 0))
-                date_str = datetime.fromtimestamp(create_time).strftime('%Y-%m-%d %H:%M')
-                f.write(f"| {idx} | {title} | {date_str} |\n")
-        
-        print(f"索引文件已保存到: {index_file}")
+
         
         if not download_content:
             print("\n跳过文章内容下载")
