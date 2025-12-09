@@ -125,8 +125,51 @@ class WeChatAlbumDownloader:
         
         return all_articles
 
-    def download_article_content(self, url, retry=2):
-        """下载单篇文章内容，保留所有原有内容（包括图片链接和排版）"""
+    def download_image(self, img_url, article_date, img_counter, retry=2):
+        """下载单张图片"""
+        for attempt in range(retry):
+            try:
+                response = self.session.get(img_url, headers=self.headers, timeout=30)
+                response.raise_for_status()
+                
+                # 创建图片目录
+                img_dir = os.path.join(self.output_dir, 'images')
+                if not os.path.exists(img_dir):
+                    os.makedirs(img_dir)
+                
+                # 确定文件扩展名
+                content_type = response.headers.get('content-type', '')
+                if 'png' in content_type:
+                    ext = '.png'
+                elif 'jpg' in content_type or 'jpeg' in content_type:
+                    ext = '.jpg'
+                elif 'gif' in content_type:
+                    ext = '.gif'
+                elif 'webp' in content_type:
+                    ext = '.webp'
+                else:
+                    # 从URL获取扩展名
+                    url_path = img_url.split('?')[0]
+                    ext = os.path.splitext(url_path)[1] or '.jpg'
+                
+                # 保存图片
+                filename = f"{article_date}_img{img_counter}{ext}"
+                filepath = os.path.join(img_dir, filename)
+                
+                with open(filepath, 'wb') as f:
+                    f.write(response.content)
+                
+                # 返回相对路径
+                return f"images/{filename}"
+            except Exception as e:
+                if attempt < retry - 1:
+                    time.sleep(1)
+                else:
+                    print(f"      下载图片失败 ({img_url}): {e}")
+        return None
+
+    def download_article_content(self, url, article_date, retry=2):
+        """下载单篇文章内容，下载图片到本地"""
         for attempt in range(retry):
             try:
                 response = self.session.get(url, headers=self.headers, timeout=60)
@@ -146,9 +189,9 @@ class WeChatAlbumDownloader:
                     else:
                         content_html = ""
                 
-                # 转换为Markdown，保留所有内容
+                # 转换为Markdown，下载图片到本地
                 if content_html:
-                    # 提取所有图片URL并用占位符替换
+                    # 提取所有图片URL并下载
                     img_replacements = {}
                     img_counter = 0
                     
@@ -157,7 +200,15 @@ class WeChatAlbumDownloader:
                         nonlocal img_counter
                         img_url = match.group(1)
                         placeholder = f"__IMAGE_PLACEHOLDER_{img_counter}__"
-                        img_replacements[placeholder] = img_url
+                        
+                        # 下载图片
+                        local_path = self.download_image(img_url, article_date, img_counter)
+                        if local_path:
+                            img_replacements[placeholder] = local_path
+                        else:
+                            # 下载失败则保留原URL
+                            img_replacements[placeholder] = img_url
+                        
                         img_counter += 1
                         return f'<img src="{placeholder}"'
                     
@@ -167,8 +218,8 @@ class WeChatAlbumDownloader:
                     markdown_content = self.h2t.handle(content_html)
                     
                     # 还原图片链接
-                    for placeholder, img_url in img_replacements.items():
-                        markdown_content = markdown_content.replace(placeholder, img_url)
+                    for placeholder, img_path in img_replacements.items():
+                        markdown_content = markdown_content.replace(placeholder, img_path)
                     
                     # 清理多余空行
                     markdown_content = re.sub(r'\n{3,}', '\n\n', markdown_content)
@@ -354,7 +405,7 @@ class WeChatAlbumDownloader:
                 continue
             
             # 下载内容
-            content = self.download_article_content(url)
+            content = self.download_article_content(url, date_str)
             
             # 保存文件
             filepath = os.path.join(self.output_dir, filename)
