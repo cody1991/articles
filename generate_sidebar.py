@@ -7,9 +7,10 @@ import re
 from pathlib import Path
 
 def generate_sidebar_config():
-    # 公众号映射 - 支持两个源目录
+    # 公众号映射 - 支持多个源目录
     authors = {
-        '金渐层': ['docs/金渐层', 'wechat_articles']  # 优先使用 docs/金渐层，备用 wechat_articles
+        '金渐层': ['docs/金渐层', 'wechat_articles/金渐层'],
+        '只做主升不做调整': ['docs/只做主升不做调整', 'wechat_articles/只做主升不做调整']
     }
     
     all_configs = {}
@@ -44,8 +45,8 @@ def generate_sidebar_config():
                         'filename': name
                     }
                     
-                    # 避免重复
-                    if article_info not in articles:
+                    # 避免重复（根据日期和标题去重）
+                    if not any(a['date'] == date and a['title'] == title for a in articles):
                         articles.append(article_info)
             
             # 如果在这个目录找到了文章，就不再尝试后续目录
@@ -74,12 +75,12 @@ def generate_sidebar_config():
         }
     
     # 生成完整的侧边栏配置文件
-    sidebar_config = {
-        '金渐层': {
-            'text': '金渐层',
-            'children': all_configs['金渐层']['articles']
+    sidebar_config = {}
+    for author_name in all_configs.keys():
+        sidebar_config[author_name] = {
+            'text': author_name,
+            'children': all_configs[author_name]['articles']
         }
-    }
     
     # 保存为 JSON
     with open('sidebar_config.json', 'w', encoding='utf-8') as f:

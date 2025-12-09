@@ -34,11 +34,16 @@ export default defineUserConfig({
         text: '金渐层',
         link: '/金渐层/',
       },
+      {
+        text: '只做主升不做调整',
+        link: '/只做主升不做调整/',
+      },
     ],
     
     // 侧边栏配置 - 按公众号组织
     sidebar: {
       '/金渐层/': [sidebarConfig['金渐层']],
+      '/只做主升不做调整/': [sidebarConfig['只做主升不做调整']],
       '/': [],
     },
     
