@@ -126,7 +126,7 @@ class WeChatAlbumDownloader:
         return all_articles
 
     def download_article_content(self, url, retry=2):
-        """下载单篇文章内容"""
+        """下载单篇文章内容，保留所有原有内容（包括图片链接和排版）"""
         for attempt in range(retry):
             try:
                 response = self.session.get(url, headers=self.headers, timeout=60)
@@ -146,11 +146,33 @@ class WeChatAlbumDownloader:
                     else:
                         content_html = ""
                 
-                # 转换为Markdown
+                # 转换为Markdown，保留所有内容
                 if content_html:
+                    # 提取所有图片URL并用占位符替换
+                    img_replacements = {}
+                    img_counter = 0
+                    
+                    # 提取所有img标签的src
+                    def replace_img(match):
+                        nonlocal img_counter
+                        img_url = match.group(1)
+                        placeholder = f"__IMAGE_PLACEHOLDER_{img_counter}__"
+                        img_replacements[placeholder] = img_url
+                        img_counter += 1
+                        return f'<img src="{placeholder}"'
+                    
+                    content_html = re.sub(r'<img[^>]+src=["\']([^"\']+)["\']', replace_img, content_html)
+                    
+                    # 转换为Markdown
                     markdown_content = self.h2t.handle(content_html)
+                    
+                    # 还原图片链接
+                    for placeholder, img_url in img_replacements.items():
+                        markdown_content = markdown_content.replace(placeholder, img_url)
+                    
                     # 清理多余空行
                     markdown_content = re.sub(r'\n{3,}', '\n\n', markdown_content)
+                    
                     return markdown_content.strip()
                 
                 return ""
