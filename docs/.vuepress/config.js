@@ -16,7 +16,7 @@ export default defineUserConfig({
   title: '微信文章集',
   description: '微信文章收藏与阅读',
   
-  // 设置基础路径（GitHub Pages 部署到子路径）
+  // 设置基础路径
   base: '/articles/',
   
   // 使用 Vite 作为打包工具
@@ -31,25 +31,15 @@ export default defineUserConfig({
         link: '/',
       },
       {
-        text: '文章列表',
-        link: '/articles/',
+        text: '金渐层',
+        link: '/金渐层/',
       },
     ],
     
-    // 侧边栏配置
+    // 侧边栏配置 - 按公众号组织
     sidebar: {
-      '/articles/': [
-        {
-          text: '所有文章',
-          children: sidebarConfig,
-        },
-      ],
-      '/': [
-        {
-          text: '最新文章',
-          children: sidebarConfig.slice(0, 20),
-        },
-      ],
+      '/金渐层/': [sidebarConfig['金渐层']],
+      '/': [],
     },
     
     // 显示所有页面的标题
@@ -70,9 +60,6 @@ export default defineUserConfig({
   alias: {
     '@': path.resolve(__dirname, '../'),
   },
-  
-  // 配置 Markdown
-  // 注意：code.lineNumbers 选项已移除，如需代码行号请使用插件
   
   // 开发服务器配置
   port: 8080,
