@@ -10,7 +10,8 @@ def generate_sidebar_config():
     # 公众号映射 - 唯一数据源在 docs/ 目录
     authors = {
         '金渐层': 'docs/金渐层',
-        '只做主升不做调整': 'docs/只做主升不做调整'
+        '只做主升不做调整': 'docs/只做主升不做调整',
+        '口罩哥': 'docs/口罩哥'
     }
     
     all_configs = {}

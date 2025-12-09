@@ -363,6 +363,10 @@ WECHAT_ACCOUNTS = {
     '只做主升不做调整': {
         'url': 'https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI2NzA2Mzg3MQ==&action=getalbum&album_id=3822716899375087617',
         'output_dir': 'docs/只做主升不做调整'
+    },
+    '口罩哥': {
+        'url': 'https://mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzk4ODc3ODgyOQ==&action=getalbum&album_id=4290005100099387396',
+        'output_dir': 'docs/口罩哥'
     }
 }
 
