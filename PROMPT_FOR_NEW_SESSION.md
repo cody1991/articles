@@ -23,6 +23,11 @@ python3 download_wechat_articles.py 公众号名字 -f
 ### 1. 检查现有配置
 首先检查 `download_wechat_articles.py` 中的 `WECHAT_ACCOUNTS` 配置，看看是否需要下载新的文章或更新现有内容。
 
+**当前可用的公众号**：
+- 金渐层
+- 只做主升不做调整
+- 口罩哥
+
 ### 2. 添加新公众号
 如果需要新增公众号，请在 `download_wechat_articles.py` 的 `WECHAT_ACCOUNTS` 字典中添加新条目：
 
