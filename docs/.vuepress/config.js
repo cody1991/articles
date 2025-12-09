@@ -38,12 +38,17 @@ export default defineUserConfig({
         text: '只做主升不做调整',
         link: '/只做主升不做调整/',
       },
+      {
+        text: '口罩哥',
+        link: '/口罩哥/',
+      },
     ],
     
     // 侧边栏配置 - 按公众号组织
     sidebar: {
       '/金渐层/': [sidebarConfig['金渐层']],
       '/只做主升不做调整/': [sidebarConfig['只做主升不做调整']],
+      '/口罩哥/': [sidebarConfig['口罩哥']],
       '/': [],
     },
     
