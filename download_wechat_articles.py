@@ -80,18 +80,19 @@ class WeChatAlbumDownloader:
                     return None
         return None
 
-    def get_all_articles(self, reverse=True):
-        """获取所有文章列表"""
+    def get_all_articles(self, reverse=True, stop_at_date=None):
+        """获取文章列表，可按日期提前终止"""
         all_articles = []
         begin_msgid = None
         begin_itemidx = None
         page = 1
+        stop_flag = False
         
         print("正在获取文章列表...")
         
         while True:
             print(f"  获取第 {page} 页...")
-            data = self.get_album_articles(count=20, begin_msgid=begin_msgid, begin_itemidx=begin_itemidx)
+            data = self.get_album_articles(count=20, begin_msgid=begin_msgid, begin_itemidx=begin_itemidx, reverse=reverse)
             
             if not data:
                 break
@@ -101,8 +102,19 @@ class WeChatAlbumDownloader:
             if not article_list:
                 break
             
-            all_articles.extend(article_list)
+            # 按接口返回顺序（reverse=True 时为新→旧）遍历，遇到早于 stop_at_date 的就停止
+            for article in article_list:
+                create_time = self.parse_time(article.get('create_time', 0))
+                date_str = datetime.fromtimestamp(create_time).strftime('%Y-%m-%d')
+                if stop_at_date and date_str < stop_at_date:
+                    stop_flag = True
+                    break
+                all_articles.append(article)
+            
             print(f"  已获取 {len(all_articles)} 篇文章")
+            
+            if stop_flag:
+                break
             
             # 检查是否还有更多
             continue_flag = data.get('getalbum_resp', {}).get('continue_flag', 0)
@@ -352,16 +364,19 @@ class WeChatAlbumDownloader:
             download_content: 是否下载文章内容
             skip_existing: 是否跳过已下载的文章
         """
-        articles = self.get_all_articles(reverse=reverse)
+        # 先读取本地已下载信息，确定最晚日期以便早停
+        existing_articles = self.get_existing_articles() if skip_existing else {}
+        local_latest_date = None
+        if existing_articles:
+            local_dates = [info['date'] for info in existing_articles.values()]
+            local_latest_date = max(local_dates) if local_dates else None
+            print(f"检测到已下载的文章 {len(existing_articles)} 篇，最新日期 {local_latest_date}")
+        
+        articles = self.get_all_articles(reverse=reverse, stop_at_date=local_latest_date if skip_existing else None)
         
         if not articles:
             print("没有获取到文章")
             return
-        
-        # 获取已下载的文章
-        existing_articles = self.get_existing_articles() if skip_existing else {}
-        if existing_articles:
-            print(f"检测到已下载的文章 {len(existing_articles)} 篇")
         
         # 按时间排序
         if reverse:
