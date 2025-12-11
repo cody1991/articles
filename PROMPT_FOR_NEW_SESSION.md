@@ -36,6 +36,11 @@ python3 download_wechat_articles.py 公众号名字 -f
 python3 download_wechat_articles.py all --check
 ```
 
+下载完成后记得（通用检查）：
+- 确认对应 `docs/公众号/images/` 下有同步的图片；若缺图可重跑下载或手动补图
+- 运行 `python3 generate_sidebar.py` 更新侧边栏
+- 若需要在站点导航展示，检查 `docs/.vuepress/config.js` 的 navbar/sidebar 及 `docs/README.md` 导航是否同步
+
 ---
 
 ## 详细步骤 - 新增公众号
