@@ -234,6 +234,10 @@ class WeChatAlbumDownloader:
                     for placeholder, img_path in img_replacements.items():
                         markdown_content = markdown_content.replace(placeholder, img_path)
                     
+                    # 确保图片与文本之间有空行
+                    markdown_content = re.sub(r'(?<!\n)(!\[.*?\]\(.*?\))(?=\S)', r'\n\n\1', markdown_content)
+                    markdown_content = re.sub(r'(!\[.*?\]\(.*?\))(?!\n)', r'\1\n\n', markdown_content)
+                    
                     # 清理多余空行
                     markdown_content = re.sub(r'\n{3,}', '\n\n', markdown_content)
                     
@@ -250,6 +254,8 @@ class WeChatAlbumDownloader:
 
     def sanitize_filename(self, filename):
         """清理文件名，移除非法字符"""
+        # 统一替换特殊符号（# 作为片段分隔符，需替换）
+        filename = filename.replace('#', '＃')
         # 移除或替换非法字符
         filename = re.sub(r'[<>:"/\\|?*]', '_', filename)
         filename = re.sub(r'\s+', ' ', filename)

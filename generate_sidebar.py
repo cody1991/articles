@@ -5,6 +5,7 @@
 import json
 import re
 from pathlib import Path
+from urllib.parse import quote
 
 def generate_sidebar_config():
     # 公众号映射 - 唯一数据源在 docs/ 目录
@@ -38,10 +39,11 @@ def generate_sidebar_config():
             match = re.match(r'(\d{4}-\d{2}-\d{2})_(.+)\.md', name)
             if match:
                 date, title = match.groups()
+                encoded_path = quote(f'/{author_name}/{name[:-3]}.html', safe='/')
                 article_info = {
                     'date': date,
                     'title': title,
-                    'path': f'/{author_name}/{name}',
+                    'path': encoded_path,
                     'filename': name
                 }
                 
