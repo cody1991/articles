@@ -12,7 +12,7 @@
 
 「我在家啊，露台上」
 
-![](images/2024-06-14_Work Life Balance_img0.jpg)
+![](<images/2024-06-14_Work Life Balance_img0.jpg>)
 
 然后话题突然就走向了，德国环境可真好。
 
@@ -30,7 +30,7 @@
 
 网上有个统计数据，OECD 成员国中，德国是平均工作时长最短的国家，**每周不到 26 小时** 。收入换算到时薪，也只比最高的几个北欧国家低了一点点。
 
-![](images/2024-06-14_Work Life Balance_img1.png)
+![](<images/2024-06-14_Work Life Balance_img1.png>)
 
 后来有小伙伴觉得这个数据太离谱，是不是统计有问题。我大致算了一下：
 
@@ -50,7 +50,7 @@
 
 但最近 @面基 新录的一期播客，我特别认同：
 
-![](images/2024-06-14_Work Life Balance_img2.jpg)
+![](<images/2024-06-14_Work Life Balance_img2.jpg>)
 
 > 增加了对照组，更会生活了。
 
