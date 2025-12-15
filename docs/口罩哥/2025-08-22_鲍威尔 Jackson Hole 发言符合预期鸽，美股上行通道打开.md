@@ -6,7 +6,9 @@
 
 ---
 
-![](images/2025-08-22_鲍威尔 Jackson Hole 发言符合预期鸽，美股上行通_img0.png)总结一下 Powell 在 Jackson Hole 的 Bullet Point:
+![](images/2025-08-22_鲍威尔 Jackson Hole 发言符合预期鸽，美股上行通_img0.png)
+
+总结一下 Powell 在 Jackson Hole 的 Bullet Point:
 
 政策立场调整
 
