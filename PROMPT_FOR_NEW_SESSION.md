@@ -9,7 +9,7 @@
 3. ✅ `docs/.vuepress/config.js` → navbar 和 sidebar 配置 **【容易漏掉！】**
 4. ✅ `docs/README.md` → 公众号导航部分
 5. ✅ `docs/公众号名字/README.md` → 新建首页
-6. ✅ `PROMPT_FOR_NEW_SESSION.md` → 更新此清单
+6. ✅ `PROMPT_FOR_NEW_SESSION.md` → 更新此清单（新增：财务自由那些事）
 
 **⚠️ 常见漏掉的地方**：`docs/.vuepress/config.js` 中的 navbar 和 sidebar 配置！如果漏掉，网站导航栏和侧边栏都不会显示新公众号。
 
@@ -117,9 +117,10 @@ python3 generate_sidebar.py
 
 | 公众号 | 文章数 | 状态 |
 |------|------|-----|
-| 金渐层 | 327 篇 | ✅ |
-| 只做主升不做调整 | 170 篇 | ✅ |
-| 口罩哥 | 28 篇 | ✅ |
+| 金渐层 | 329 篇 | ✅ |
+| 只做主升不做调整 | 171 篇 | ✅ |
+| 口罩哥 | 30 篇 | ✅ |
+| 财务自由那些事 | 251 篇 | ✅ |
 
 ---
 

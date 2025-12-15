@@ -456,6 +456,10 @@ WECHAT_ACCOUNTS = {
     '口罩哥': {
         'url': 'https://mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzk4ODc3ODgyOQ==&action=getalbum&album_id=4290005100099387396',
         'output_dir': 'docs/口罩哥'
+    },
+    '财务自由那些事': {
+        'url': 'https://mp.weixin.qq.com/mp/appmsgalbum?action=getalbum&__biz=MzUzNjE3NzQ3Nw==&scene=1&album_id=1319255999014043648&count=3#wechat_redirect',
+        'output_dir': 'docs/财务自由那些事'
     }
 }
 

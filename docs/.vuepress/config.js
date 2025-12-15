@@ -42,6 +42,10 @@ export default defineUserConfig({
         text: '口罩哥',
         link: '/口罩哥/',
       },
+      {
+        text: '财务自由那些事',
+        link: '/财务自由那些事/',
+      },
     ],
     
     // 侧边栏配置 - 按公众号组织
@@ -49,6 +53,7 @@ export default defineUserConfig({
       '/金渐层/': [sidebarConfig['金渐层']],
       '/只做主升不做调整/': [sidebarConfig['只做主升不做调整']],
       '/口罩哥/': [sidebarConfig['口罩哥']],
+      '/财务自由那些事/': [sidebarConfig['财务自由那些事']],
       '/': [],
     },
     
