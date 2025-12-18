@@ -12,7 +12,7 @@ def generate_sidebar_config():
     authors = {
         '金渐层': 'docs/金渐层',
         '只做主升不做调整': 'docs/只做主升不做调整',
-        '口罩哥': 'docs/口罩哥',
+        '社会观察从业者': 'docs/社会观察从业者',
         '财务自由那些事': 'docs/财务自由那些事'
     }
     
