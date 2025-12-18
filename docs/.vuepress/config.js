@@ -39,8 +39,8 @@ export default defineUserConfig({
         link: '/只做主升不做调整/',
       },
       {
-        text: '口罩哥',
-        link: '/口罩哥/',
+        text: '社会观察从业者',
+        link: '/社会观察从业者/',
       },
       {
         text: '财务自由那些事',
@@ -52,7 +52,7 @@ export default defineUserConfig({
     sidebar: {
       '/金渐层/': [sidebarConfig['金渐层']],
       '/只做主升不做调整/': [sidebarConfig['只做主升不做调整']],
-      '/口罩哥/': [sidebarConfig['口罩哥']],
+      '/社会观察从业者/': [sidebarConfig['社会观察从业者']],
       '/财务自由那些事/': [sidebarConfig['财务自由那些事']],
       '/': [],
     },
