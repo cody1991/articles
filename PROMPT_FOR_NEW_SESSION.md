@@ -9,7 +9,7 @@
 3. ✅ `docs/.vuepress/config.js` → navbar 和 sidebar 配置 **【容易漏掉！】**
 4. ✅ `docs/README.md` → 公众号导航部分
 5. ✅ `docs/公众号名字/README.md` → 新建首页
-6. ✅ `PROMPT_FOR_NEW_SESSION.md` → 更新此清单（新增：财务自由那些事）
+6. ✅ `PROMPT_FOR_NEW_SESSION.md` → 更新此清单（新增：美投investing & 单篇入库指引）
 
 **⚠️ 常见漏掉的地方**：`docs/.vuepress/config.js` 中的 navbar 和 sidebar 配置！如果漏掉，网站导航栏和侧边栏都不会显示新公众号。
 
@@ -34,6 +34,13 @@ python3 download_wechat_articles.py 公众号名字 -f
 ### 检查所有公众号是否有新文章
 ```bash
 python3 download_wechat_articles.py all --check
+```
+
+### 单篇入库（文章直链）
+```bash
+python3 single_article_import.py <文章链接> --dir docs/美投investing
+# 可选：
+# python3 single_article_import.py <文章链接> --dir docs/美投investing --date YYYY-MM-DD --title 自定义标题
 ```
 
 下载完成后记得（通用检查）：
@@ -117,10 +124,11 @@ python3 generate_sidebar.py
 
 | 公众号 | 文章数 | 状态 |
 |------|------|-----|
-| 金渐层 | 329 篇 | ✅ |
+| 金渐层 | 332 篇 | ✅ |
 | 只做主升不做调整 | 171 篇 | ✅ |
-| 社会观察从业者 | 31 篇 | ✅ |
-| 财务自由那些事 | 251 篇 | ✅ |
+| 社会观察从业者 | 32 篇 | ✅ |
+| 财务自由那些事 | 252 篇 | ✅ |
+| 美投investing | 1 篇 | ✅ |
 
 ---
 

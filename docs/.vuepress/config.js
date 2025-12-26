@@ -46,6 +46,10 @@ export default defineUserConfig({
         text: '财务自由那些事',
         link: '/财务自由那些事/',
       },
+      {
+        text: '美投investing',
+        link: '/美投investing/',
+      },
     ],
     
     // 侧边栏配置 - 按公众号组织
@@ -54,6 +58,7 @@ export default defineUserConfig({
       '/只做主升不做调整/': [sidebarConfig['只做主升不做调整']],
       '/社会观察从业者/': [sidebarConfig['社会观察从业者']],
       '/财务自由那些事/': [sidebarConfig['财务自由那些事']],
+      '/美投investing/': [sidebarConfig['美投investing']],
       '/': [],
     },
     
