@@ -40,7 +40,7 @@ def generate_sidebar_config():
             match = re.match(r'(\d{4}-\d{2}-\d{2})_(.+)\.md', name)
             if match:
                 date, title = match.groups()
-                encoded_path = quote(f'/{author_name}/{name[:-3]}.html', safe='/')
+                encoded_path = quote(f'/{author_name}/{name[:-3]}.html', safe='/()')
                 article_info = {
                     'date': date,
                     'title': title,
