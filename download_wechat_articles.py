@@ -452,7 +452,7 @@ class WeChatAlbumDownloader:
 # 公众号配置
 WECHAT_ACCOUNTS = {
     '金渐层': {
-        'url': 'https://mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzg2NTkwNTM4MA==&action=getalbum&album_id=3896715541905326087',
+        'url': 'https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzYzOTU1NTUzNw==&action=getalbum&album_id=4319967935826853894',
         'output_dir': 'docs/金渐层'
     },
     '只做主升不做调整': {
