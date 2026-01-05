@@ -88,11 +88,25 @@ class WeChatAlbumDownloader:
         page = 1
         stop_flag = False
         
+        # 先探测哪种 reverse 参数能获取到最新文章
+        data1 = self.get_album_articles(count=1, reverse=False)
+        data2 = self.get_album_articles(count=1, reverse=True)
+        
+        art1 = (data1.get('getalbum_resp', {}).get('article_list', []) or [None])[0] if data1 else None
+        art2 = (data2.get('getalbum_resp', {}).get('article_list', []) or [None])[0] if data2 else None
+        
+        if art1 and art2:
+            t1 = self.parse_time(art1.get('create_time', 0))
+            t2 = self.parse_time(art2.get('create_time', 0))
+            use_reverse = t2 >= t1  # 用返回更新文章的那个
+        else:
+            use_reverse = reverse
+        
         print("正在获取文章列表...")
         
         while True:
             print(f"  获取第 {page} 页...")
-            data = self.get_album_articles(count=20, begin_msgid=begin_msgid, begin_itemidx=begin_itemidx, reverse=reverse)
+            data = self.get_album_articles(count=20, begin_msgid=begin_msgid, begin_itemidx=begin_itemidx, reverse=use_reverse)
             
             if not data:
                 break
@@ -102,11 +116,11 @@ class WeChatAlbumDownloader:
             if not article_list:
                 break
             
-            # 按接口返回顺序（reverse=True 时为新→旧）遍历，遇到早于 stop_at_date 的就停止
+            # 按接口返回顺序遍历，遇到早于等于 stop_at_date 的就停止
             for article in article_list:
                 create_time = self.parse_time(article.get('create_time', 0))
                 date_str = datetime.fromtimestamp(create_time).strftime('%Y-%m-%d')
-                if stop_at_date and date_str < stop_at_date:
+                if stop_at_date and date_str <= stop_at_date:
                     stop_flag = True
                     break
                 all_articles.append(article)
@@ -131,9 +145,8 @@ class WeChatAlbumDownloader:
         
         print(f"\n共获取 {len(all_articles)} 篇文章")
         
-        # 按时间排序
-        if reverse:
-            all_articles = sorted(all_articles, key=lambda x: self.parse_time(x.get('create_time', 0)), reverse=True)
+        # 按时间排序（从新到旧）
+        all_articles = sorted(all_articles, key=lambda x: self.parse_time(x.get('create_time', 0)), reverse=True)
         
         return all_articles
 
