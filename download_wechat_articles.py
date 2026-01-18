@@ -44,6 +44,36 @@ class WeChatAlbumDownloader:
         self.h2t.ignore_images = False
         self.h2t.body_width = 0  # 不换行
 
+    def normalize_article_list(self, article_list):
+        """把微信接口返回的 article_list 兼容性归一为 list。
+
+        微信接口在不同场景下可能返回：
+        - list：常规多篇文章
+        - dict：单篇文章对象（例如 count=1 时），或以索引为 key 的 map（例如 {"0": {...}}）
+        """
+        if not article_list:
+            return []
+
+        if isinstance(article_list, list):
+            return article_list
+
+        if isinstance(article_list, dict):
+            # 1) 单篇文章对象：直接包装成 list
+            if any(k in article_list for k in ('create_time', 'title', 'msgid', 'itemidx', 'url')):
+                return [article_list]
+
+            # 2) 以索引为 key 的 map：按 key 排序后取 value
+            keys = list(article_list.keys())
+            if keys and all(str(k).isdigit() for k in keys):
+                items = list(article_list.items())
+                items.sort(key=lambda kv: int(kv[0]))
+                return [v for _, v in items]
+
+            # 3) 兜底：结构不明，返回空
+            return []
+
+        return []
+
     def get_album_articles(self, count=10, begin_msgid=None, begin_itemidx=None, reverse=None, retry=3):
         """获取合集文章列表"""
         api_url = "https://mp.weixin.qq.com/mp/appmsgalbum"
@@ -92,8 +122,14 @@ class WeChatAlbumDownloader:
         data1 = self.get_album_articles(count=1, reverse=False)
         data2 = self.get_album_articles(count=1, reverse=True)
         
-        art1 = (data1.get('getalbum_resp', {}).get('article_list', []) or [None])[0] if data1 else None
-        art2 = (data2.get('getalbum_resp', {}).get('article_list', []) or [None])[0] if data2 else None
+        raw_list1 = data1.get('getalbum_resp', {}).get('article_list', []) if data1 else []
+        raw_list2 = data2.get('getalbum_resp', {}).get('article_list', []) if data2 else []
+
+        list1 = self.normalize_article_list(raw_list1)
+        list2 = self.normalize_article_list(raw_list2)
+
+        art1 = list1[0] if list1 else None
+        art2 = list2[0] if list2 else None
         
         if art1 and art2:
             t1 = self.parse_time(art1.get('create_time', 0))
@@ -111,7 +147,8 @@ class WeChatAlbumDownloader:
             if not data:
                 break
             
-            article_list = data.get('getalbum_resp', {}).get('article_list', [])
+            raw_article_list = data.get('getalbum_resp', {}).get('article_list', [])
+            article_list = self.normalize_article_list(raw_article_list)
             
             if not article_list:
                 break
